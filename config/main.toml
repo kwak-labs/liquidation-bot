@@ -1,0 +1,11 @@
+Seed_phrase = ""
+Grpc_endpoint = "umee-grpc.polkachu.com:13690"
+Rest_endpoint = "https://api.mainnet.network.umee.cc/umee/leverage/v1/liquidation_targets"
+Min_usd_value = 0.00000000001
+Interval = 5
+Memo = "https://github.com/kwak-labs/umee-liquidation-bot"
+
+[Gas] 
+Denom = "uumee"
+Gas = "200000"
+Fee = "0"
