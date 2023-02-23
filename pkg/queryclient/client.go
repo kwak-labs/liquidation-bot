@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"fmt"
 	"strconv"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"google.golang.org/grpc"
 
-	// banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	leverageTypes "github.com/umee-network/umee/v4/x/leverage/types"
 )
 
@@ -139,6 +139,8 @@ func (q *QueryClient) FetchTarget() (HighestValue, error) {
 					Amount: sAmount,
 				},
 			}
+
+			fmt.Println(highestValue)
 		}
 	}
 

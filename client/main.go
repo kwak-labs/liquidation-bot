@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"syscall"
 
-	// sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/fatih/color"
 	"github.com/pelletier/go-toml/v2"
 

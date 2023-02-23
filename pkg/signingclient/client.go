@@ -1,34 +1,26 @@
 package signing
 
 import (
-	// "context"
-	// "encoding/hex"
-	// "context"
+	"context"
 	"fmt"
 	"log"
 
-	// "github.com/btcsuite/btcutil/bech32"
+	"github.com/kwak-labs/liquidation-bot-v2/pkg/queryclient"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/go-bip39"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"google.golang.org/grpc"
-
-	"github.com/kwak-labs/liquidation-bot-v2/pkg/queryclient"
-
-	// "github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	// "github.com/cosmos/cosmos-sdk/types/tx/signing"
-	// xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	leverageTypes "github.com/umee-network/umee/v4/x/leverage/types"
 )
 
 type SigningClient struct {
-	grpc_url string
+	Grpc_url string
 
-	signingClient any
+	SigningClient leverageTypes.MsgClient
 }
 
 func CreateSigningClient(grpc_url string) SigningClient {
@@ -37,6 +29,7 @@ func CreateSigningClient(grpc_url string) SigningClient {
 		grpc.WithInsecure(), // The Cosmos SDK doesn't support any transport security mechanism.
 		grpc.WithDefaultCallOptions(grpc.ForceCodec(codec.NewProtoCodec(nil).GRPCCodec())),
 	)
+	
 	signingClient := leverageTypes.NewMsgClient(grpcConn)
 
 	if err != nil {
@@ -44,12 +37,13 @@ func CreateSigningClient(grpc_url string) SigningClient {
 	}
 
 	return SigningClient{
-		grpc_url:      grpc_url,
-		signingClient: signingClient,
+		Grpc_url:      grpc_url,
+		SigningClient: signingClient,
 	}
 }
 
 func (s *SigningClient) Liquidate(target *query.HighestValue, Seed string) {
+
 	// path := hd.BIP44Params{
 	// 	Purpose:      44,
 	// 	CoinType:     118,
@@ -82,8 +76,16 @@ func (s *SigningClient) Liquidate(target *query.HighestValue, Seed string) {
 	}
 
 	msg := leverageTypes.NewMsgLiquidate(AccAdd, borrower, asset, target.Collateral.Denom)
-
+	
 	if err = msg.ValidateBasic(); err != nil {
 		fmt.Println(err)
 	}
+	
+	res, err := s.SigningClient.Liquidate(context.Background(), msg)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(res)
 }
